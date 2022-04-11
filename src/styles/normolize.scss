@@ -1,0 +1,83 @@
+*:not(input):not(textarea) {
+  user-select: none;
+}
+
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address,
+big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center,
+dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside,
+canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time,
+mark, audio, video {
+  font: inherit;
+  margin: 0;
+  border: 0;
+  padding: 0;
+  font-size: 100%;
+  line-height: 1em;
+  vertical-align: baseline;
+}
+
+html, body {
+  height: 100%;
+  display: block;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+  appearance: none;
+  font-feature-settings: "pnum" on, "lnum" on;
+  -webkit-tap-highlight-color: transparent;
+}
+
+*, *:before, *:after {
+  box-sizing: border-box;
+  font-family: 'Montserrat', sans-serif !important;
+}
+
+head {
+  display: none;
+}
+
+body {
+  height: auto;
+  overscroll-behavior-y: none;
+}
+
+html {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overscroll-behavior-y: none;
+}
+
+html, body {
+  height: var(--app-height);
+}
+
+@media screen and (max-height: 500px) {
+  html, body {
+    font-size: 12px;
+  }
+}
+
+@media screen and (max-height: 600px) and (min-height: 501px) {
+  html, body {
+    font-size: 14px;
+  }
+}
+
+@media screen and (min-height: 700px) {
+  html, body {
+    font-size: 16px;
+  }
+}
+
+html[data-hide-scroll], html[data-hide-scroll] body {
+  position: relative !important;
+}
+
+ol, ul {
+  list-style: none;
+}
