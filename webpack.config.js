@@ -1,40 +1,36 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const TerserPlugin = require("terser-webpack-plugin");
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 
 const isProd = process.env.NODE_ENV === 'production';
 
-let target = 'web';
-if (process.env.NODE_ENV === 'production') {
-  target = 'browserslist';
-}
-
-let pluginList = [];
+const plugins = [];
 if (!isProd) {
   const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
-  pluginList.push(new ReactRefreshWebpackPlugin());
+  plugins.push(new ReactRefreshWebpackPlugin());
 }
 
-pluginList.push(
+plugins.push(
   new HtmlWebpackPlugin({
     template: './src/index.html',
   }),
 );
 
-pluginList.push(
+plugins.push(
   new MiniCssExtractPlugin({
     filename: isProd ? '[name].[hash].css' : '[name].css',
-    chunkFilename: isProd ? '[id].[hash].css' : '[id].css'
+    chunkFilename: isProd ? '[id].[hash].css' : '[id].css',
   }),
-)
+);
 
 module.exports = {
+  mode: isProd ? 'production' : 'development',
   devtool: isProd ? false : 'source-map',
-  plugins: pluginList,
+  plugins: plugins,
   entry: './src/index.tsx',
-  target,
+  target: isProd ? 'browserslist' : 'web',
   output: {
     path: path.resolve(__dirname, 'build'),
     clean: true,
@@ -44,26 +40,19 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
     alias: {
-      "@/types": path.resolve(__dirname, 'src/types'),
-      "@/hooks": path.resolve(__dirname, 'src/hooks'),
-      "@/styles": path.resolve(__dirname, 'src/styles'),
-      "@/recoil": path.resolve(__dirname, 'src/recoil'),
+      '@/types': path.resolve(__dirname, 'src/types'),
+      '@/hooks': path.resolve(__dirname, 'src/hooks'),
+      '@/styles': path.resolve(__dirname, 'src/styles'),
+      '@/recoil': path.resolve(__dirname, 'src/recoil'),
     },
   },
   devServer: {
     historyApiFallback: true,
     hot: true,
     static: './build',
-
-    proxy: {
-      '/api': 'http://localhost:8000',
-      '/cms/media': 'http://localhost:8002',
-      '/cms': 'http://localhost:8001',
-      '/metrics': 'http://localhost:8003',
-    },
   },
   optimization: {
-    minimize: true,
+    minimize: isProd,
     minimizer: [new TerserPlugin()],
     splitChunks: {
       cacheGroups: {
@@ -89,26 +78,25 @@ module.exports = {
           options: {
             cacheDirectory: true,
             presets: ['@babel/typescript', '@babel/preset-env', '@babel/preset-react'],
-            plugins: ['@babel/proposal-class-properties', '@babel/proposal-object-rest-spread'],
+            plugins: [
+              !isProd && 'react-refresh/babel',
+            ].filter(Boolean),
           },
         },
       },
 
       {
         test: /\.css$/,
-        use: [
-          isProd ? MiniCssExtractPlugin.loader : "style-loader",
-          "css-loader"
-        ],
+        use: [isProd ? MiniCssExtractPlugin.loader : 'style-loader', 'css-loader'],
         exclude: /\.module\.css$/,
       },
 
       {
         test: /\.module\.s[ac]ss$/,
         use: [
-          isProd ? MiniCssExtractPlugin.loader : "style-loader",
+          isProd ? MiniCssExtractPlugin.loader : 'style-loader',
           {
-            loader: "css-loader",
+            loader: 'css-loader',
             options: {
               modules: {
                 localIdentName: isProd ? '[hash:base64:10]' : '[name]-[local]--[hash:base64:5]',
@@ -117,26 +105,26 @@ module.exports = {
             },
           },
           {
-            loader: "sass-loader",
+            loader: 'sass-loader',
             options: {
               sourceMap: !isProd,
-            }
-          }
+            },
+          },
         ],
       },
       {
         test: /\.s[ac]ss$/,
         exclude: /\.module\.s[ac]ss$/,
         use: [
-          !isProd ? MiniCssExtractPlugin.loader : "style-loader",
+          !isProd ? MiniCssExtractPlugin.loader : 'style-loader',
           'css-loader',
           {
             loader: 'sass-loader',
             options: {
-              sourceMap: !isProd
-            }
-          }
-        ]
+              sourceMap: !isProd,
+            },
+          },
+        ],
       },
 
       {
